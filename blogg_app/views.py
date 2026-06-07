@@ -56,11 +56,8 @@ def login(request):
             {"message": "Wrong Password"},
             status=status.HTTP_400_BAD_REQUEST
         )
-
     except TB_User.DoesNotExist:
-
         print("EMAIL NOT FOUND")
-
         return Response(
             {"message": "Email Not Found"},
             status=status.HTTP_400_BAD_REQUEST
@@ -69,30 +66,20 @@ def login(request):
 @api_view(['GET'])
 def view_profile(request, id):
     try:
-        # 🔹 Get user safely
         user = TB_User.objects.get(id=id)
-
-        # 🔹 Get posts safely using user_id (more stable)
         posts = TB_Post.objects.filter(user_id=id)
-
         post_list = []
 
         for post in posts:
-
-            # 🔹 Likes (safe using post_id)
             likes_count = TB_Like.objects.filter(post_id=post.id).count()
-
-            # 🔹 Comments (safe using post_id)
             comments = TB_Comments.objects.filter(post_id=post.id)
-
             comment_list = []
 
             for c in comments:
                 comment_list.append({
                     "id": c.id,
-                    "comment": getattr(c, "comment", "")  # 🔥 SAFE FIELD ACCESS
+                    "comment": getattr(c, "comment", "")  
                 })
-
             post_list.append({
                 "id": post.id,
                 "title": post.title,
@@ -101,7 +88,6 @@ def view_profile(request, id):
                 "likes": likes_count,
                 "comments": comment_list
             })
-
         return Response({
             "user": {
                 "id": user.id,
@@ -111,30 +97,19 @@ def view_profile(request, id):
             },
             "posts": post_list
         })
-
     except TB_User.DoesNotExist:
         return Response({"message": "User not found"}, status=404)
-
     except Exception as e:
         import traceback
-        print(traceback.format_exc())  # 🔥 SHOW REAL ERROR IN TERMINAL
+        print(traceback.format_exc())  
         return Response({"error": str(e)}, status=500)
     
 @api_view(['POST'])
 @parser_classes([MultiPartParser, FormParser])
 def add_post(request):
-
     try:
         user = TB_User.objects.get(id=request.data["user"])
-
-        post = TB_Post.objects.create(
-            user=user,
-            title=request.data["title"],
-            description=request.data["description"],
-            category=request.data["category"],
-            image=request.FILES.get("image")
-        )
-
+        post = TB_Post.objects.create(user=user,title=request.data["title"],description=request.data["description"],category=request.data["category"],image=request.FILES.get("image"))
         return Response({"message": "Post created successfully"})
 
     except Exception as e:
@@ -161,7 +136,7 @@ def get_post(request, id):
         return Response({"error": "Post not found"}, status=404)
 
 
-# ✅ UPDATE POST
+
 @api_view(['PUT'])
 @parser_classes([MultiPartParser, FormParser])
 def edit_post(request, id):
@@ -169,13 +144,11 @@ def edit_post(request, id):
         post = TB_Post.objects.get(id=id)
     except TB_Post.DoesNotExist:
         return Response({"error": "Post not found"}, status=404)
-
     serializer = PostSerializer(post, data=request.data, partial=True)
 
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
-
     print("ERRORS:", serializer.errors)
     return Response(serializer.errors, status=400)
 
@@ -187,15 +160,12 @@ def delete_post(request,id):
 
 @api_view(['POST'])
 def comments(request):
-    # This automatically reads post, user, and comment from your frontend JSON payload
     serializer = CommentSerializer(data=request.data)
 
     if serializer.is_valid():
-        serializer.save() # Remove the explicit arguments inside save()
-        return Response({'message': 'comment added'}, status=201)
-
-    # If it fails, this will output exactly why (e.g., field name mismatches)
-    print("Serializer Errors:", serializer.errors)  # 👈 This prints the exact reason in your terminal
+        serializer.save() 
+        return Response({'message': 'comment added'}, status=201)    
+    print("Serializer Errors:", serializer.errors)  
     return Response(serializer.errors, status=400)
 
 
@@ -268,20 +238,3 @@ def like_count(request, id):
         "likes": count
     })
 
-# @api_view(['GET'])
-# def user_posts(request, user_id):
-
-#     posts = TB_Post.objects.filter(user_id=user_id)
-
-#     data = []
-
-#     for post in posts:
-
-#         data.append({
-#             "id": post.id,
-#             "title": post.title,
-#             "likes": TB_Like.objects.filter(post=post).count(),
-#             "comments": TB_Comments.objects.filter(post=post).count()
-#         })
-
-#     return Response(data)
