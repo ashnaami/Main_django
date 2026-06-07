@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-nwg(!e03m67)6w9jsv-j%q%81-a0afd(h43@3-8+ske^o@egj2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["main-django.onrender.com"]
 
 
 # Application definition
@@ -57,7 +57,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
+    "https://main-react-ashna-haleema-s-projects.vercel.app/",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
