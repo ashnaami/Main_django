@@ -78,7 +78,7 @@ def view_profile(request, id):
             for c in comments:
                 comment_list.append({
                     "id": c.id,
-                    "comment": getattr(c, "comment", "")  
+                    "comment": c.comments 
                 })
             post_list.append({
                 "id": post.id,
