@@ -57,7 +57,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://main-react-ashna-haleema-s-projects.vercel.app/",
+    "https://main-react-ashna-haleema-s-projects.vercel.app",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
